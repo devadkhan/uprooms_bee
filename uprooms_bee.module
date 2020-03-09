@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * @file
+ * Contains uprooms_bee.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function uprooms_bee_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+      // Main module help for the uprooms_bee module.
+    case 'help.page.uprooms_bee':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Module to alter bee reservation form') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function uprooms_bee_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
+{
+
+  if($form_id === 'bee_add_reservation_form'){
+    //unset start and end date of bee_add_reservation form
+    //start and end date are required by bee module
+    //and it is again calculated in uproom_form_validate
+    //	unset($form['start_date']);
+
+
+    //add custom select list of minutes
+    $mins = range(15, 120, 15);
+    $mins = array_combine($mins, $mins);
+    $today = new \DateTime();
+
+
+    $form['minutes'] = [
+      '#title' => 'Select The Duration In a Minutes',
+      '#type' => 'select',
+      '#options' => $mins,
+      '#weight' => 5,
+    ];
+
+    $form['start_date']['#title'] = "Select The Start Date And Time";
+    $form['start_date']['#weight'] = 0;
+    $form['start_date']['#default_value'] = new \Drupal\Core\Datetime\DrupalDateTime($today->format('Y-m-d H:i'));
+
+    $form['end_date']['#title'] = "Select The End Date And Time";
+    $form['end_date']['#weight'] = 10;
+    $form['end_date']['#attributes']['disabled'] = 'disabled';
+    $form['submit']['#weight'] = 10;
+
+
+    //add custom validation which will set start_date and end_date value from select list of minutes
+    array_unshift($form['#validate'], 'uproom_form_validate');
+
+    //add js for calculating 
+    $form['#attached']['library'][] = 'uprooms_bee/uprooms_bee-library';
+  }
+}
+
+function uproom_form_validate(&$form, \Drupal\Core\Form\FormStateInterface $form_state){
+  $values = $form_state->getValues();
+
+  //start date is set to now
+  //	$start = new \DateTime("now");
+  //end date is now + user selected minutes
+  //	$end = new \DateTime("+".$values['minutes']." mins");
+
+
+  //	$start_date = \Drupal\Core\Datetime\DrupalDateTime::createFromDateTime($start);
+  //	$end_date = \Drupal\Core\Datetime\DrupalDateTime::createFromDateTime($end);
+
+  $end_date = clone($values['start_date']);
+  $end_date->modify("+".$values['minutes']." mins"); 
+  $form_state->setValue("end_date", $end_date);
+}

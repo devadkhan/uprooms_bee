@@ -1,0 +1,5 @@
+name: 'UpRooms Bee'
+type: module
+description: 'Module to alter bee reservation form'
+core: 8.x
+package: 'uprooms'

@@ -1,0 +1,4 @@
+uprooms_bee-library:
+  version: 1.x
+  js:
+    js/uprooms_bee.js: {}

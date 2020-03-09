@@ -1,0 +1,13 @@
+{
+    "name": "uprooms_bee",
+    "type": "drupal-module",
+    "description": "Module to alter bee reservation form",
+    "keywords": [
+    ],
+    "homepage": "https://www.drupal.org/project/uprooms_bee",
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/uprooms_bee",
+        "source": "http://cgit.drupalcode.org/uprooms_bee",
+    },
+}
